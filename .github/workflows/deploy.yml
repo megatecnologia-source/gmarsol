@@ -1,4 +1,4 @@
-name: Deploy Grupo Marsol - Hostinger
+name: Build & Auto Deploy para Branch deploy (Hostinger)
 
 on:
   push:
@@ -6,13 +6,16 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-and-deploy:
-    name: Compilar e Publicar na Hostinger
+    name: Compilar e Atualizar Branch deploy
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout do Repositório
+      - name: 📥 Checkout do Repositório (main)
         uses: actions/checkout@v4
 
       - name: ⚙️ Configurar Ambiente Node.js
@@ -30,14 +33,11 @@ jobs:
       - name: 🔨 Gerar Build de Produção
         run: npm run build
 
-      - name: 🚀 Sincronizar Arquivos com a Hostinger (FTP/FTPS)
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: 🚀 Publicar arquivos compilados na branch deploy
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          server: ${{ secrets.HOSTINGER_FTP_SERVER }}
-          username: ${{ secrets.HOSTINGER_FTP_USERNAME }}
-          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
-          local-dir: ./dist/
-          server-dir: ./public_html/
-          protocol: ftps
-          dangerous-clean-slate: false
-
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: deploy
+          keep_files: false
+          commit_message: "deploy: atualizacao automatica da producao (dist) [skip ci]"
