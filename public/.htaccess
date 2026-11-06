@@ -62,3 +62,4 @@
   AddOutputFilterByType DEFLATE application/javascript application/x-javascript application/json
   AddOutputFilterByType DEFLATE image/svg+xml
 </IfModule>
+

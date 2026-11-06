@@ -40,3 +40,4 @@ jobs:
           server-dir: ./public_html/
           protocol: ftps
           dangerous-clean-slate: false
+
