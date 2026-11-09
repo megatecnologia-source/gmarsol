@@ -24,8 +24,8 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - name: 📦 Instalar Dependências
-        run: npm install
+      - name: 📦 Instalar Dependências (Strict Lockfile)
+        run: npm ci
 
       - name: 🧪 Checagem de Tipagem
         run: npm run lint

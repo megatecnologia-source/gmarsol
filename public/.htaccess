@@ -3,7 +3,10 @@
 # Desenvolvido por Bydo Marketing (https://www.bydomarketing.com.br)
 # ==============================================================================
 
-# 1. Habilitar Rewrite Engine para SPA (Single Page Application)
+# 1. Desativar Listagem de Diretórios (Proteção contra enumeração de arquivos)
+Options -Indexes
+
+# 2. Habilitar Rewrite Engine para SPA (Single Page Application)
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
@@ -21,15 +24,39 @@
   RewriteRule . /index.html [L]
 </IfModule>
 
-# 2. Segurança Básica
+# 3. Cabeçalhos de Segurança Reforçados (OWASP / Modern Standards)
 <IfModule mod_headers.c>
+  # Previne ataque de MIME-sniffing
   Header always set X-Content-Type-Options "nosniff"
+
+  # Previne Clickjacking
   Header always set X-Frame-Options "SAMEORIGIN"
-  Header always set X-XSS-Protection "1; mode=block"
+
+  # Política de Referência estrita
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # HTTP Strict-Transport-Security (HSTS - 1 ano com includeSubDomains e preload)
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+  # Permissions-Policy (restringe APIs desnecessárias de hardware e recursos do dispositivo)
+  Header always set Permissions-Policy "camera=(), microphone=(), payment=(), geolocation=(self)"
+
+  # Content-Security-Policy (CSP) estrito e ajustado aos serviços homologados
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https://viacep.com.br; frame-ancestors 'self';"
 </IfModule>
 
-# 3. Cache de Ativos Estáticos (Imagens, Vídeos, Fontes, JS, CSS)
+# 4. Bloquear acesso a arquivos ocultos e arquivos de configuração sensíveis
+<FilesMatch "(^\.|\.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist|env|yml|yaml|md|json))$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# 5. Cache de Ativos Estáticos (Imagens, Vídeos, Fontes, JS, CSS)
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresDefault "access plus 1 month"
@@ -56,10 +83,9 @@
   ExpiresByType font/woff "access plus 1 year"
 </IfModule>
 
-# 4. Compactação Gzip / Brotli
+# 6. Compactação Gzip / Brotli
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
   AddOutputFilterByType DEFLATE application/javascript application/x-javascript application/json
   AddOutputFilterByType DEFLATE image/svg+xml
 </IfModule>
-
