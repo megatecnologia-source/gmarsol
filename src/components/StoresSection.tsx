@@ -496,10 +496,16 @@ export const StoresSection: React.FC = () => {
                       <MapPin className="w-4 h-4 text-[#E30613] shrink-0 mt-0.5" />
                       <div className="flex-1">
                         <span className="font-medium text-neutral-800">{store.address}</span>
+                        {store.neighborhood && (
+                          <span className="text-neutral-500">, {store.neighborhood}</span>
+                        )}
                         <span className="text-neutral-500"> — {store.cityState}</span>
+                        {store.cep && (
+                          <span className="block text-neutral-400 text-[11px] mt-0.5">{store.cep}</span>
+                        )}
                         <button
-                          onClick={() => handleCopy(`${store.name}: ${store.address}, ${store.cityState}`, store.id)}
-                          className="ml-2.5 inline-flex items-center gap-1 text-[11px] font-semibold text-neutral-500 hover:text-neutral-900 active:scale-95 transition-all duration-150 cursor-pointer"
+                          onClick={() => handleCopy(`${store.name}: ${store.address}, ${store.neighborhood ? store.neighborhood + ', ' : ''}${store.cityState}${store.cep ? ' — ' + store.cep : ''}`, store.id)}
+                          className="ml-0 mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold text-neutral-500 hover:text-neutral-900 active:scale-95 transition-all duration-150 cursor-pointer"
                           title="Copiar endereço completo"
                         >
                           {copiedId === store.id ? (
@@ -510,7 +516,7 @@ export const StoresSection: React.FC = () => {
                           ) : (
                             <>
                               <Copy className="w-3 h-3" />
-                              <span>Copiar</span>
+                              <span>Copiar endereço</span>
                             </>
                           )}
                         </button>
@@ -520,9 +526,16 @@ export const StoresSection: React.FC = () => {
                     {/* 3. Horário de funcionamento */}
                     <div className="flex items-start gap-2.5 text-xs text-neutral-600 mb-4">
                       <Clock className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                      <div>
+                      <div className="space-y-0.5">
                         <p className="font-semibold text-neutral-800">{store.hoursWeekday}</p>
-                        <p className="text-neutral-500">{store.hoursWeekend}</p>
+                        {store.hoursSaturday && (
+                          <p className="text-neutral-500">{store.hoursSaturday}</p>
+                        )}
+                        {store.hoursSunday && (
+                          <p className={store.hoursSunday === 'Domingo, fechado' ? 'text-neutral-400 italic' : 'text-neutral-500'}>
+                            {store.hoursSunday}
+                          </p>
+                        )}
                       </div>
                     </div>
 
