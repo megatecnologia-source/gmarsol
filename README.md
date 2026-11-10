@@ -78,51 +78,34 @@ grupo-marsol/
 
 ---
 
-## 🌐 Arquitetura de Branches & Deploy na Hostinger
+## 🌐 Deploy na Hostinger (Build Automático & CI/CD)
 
-Este projeto adota o modelo profissional de **duas branches**:
+O projeto está configurado para deploy imediato na Hostinger via integração com o GitHub:
 
-1. **`main` (Desenvolvimento & Código-fonte):**
-   - Contém todos os arquivos fonte (`src/`, `package.json`, `vite.config.ts`, etc.).
-   - É nela que você trabalha e faz seus commits.
+### Opção A: Hostinger Web Apps / Node.js (Recomendada — Build Nativo)
+A Hostinger executa o build automaticamente a cada novo commit enviado para a branch `main`:
 
-2. **`deploy` (Produção & Hostinger):**
-   - Contém **estritamente os arquivos finais compilados** da pasta `dist/` (`index.html`, `.htaccess` e pasta `assets/`).
-   - É a branch conectada diretamente na Hostinger (`public_html`).
-   - **Atualizada automaticamente pelo GitHub Actions** a cada push na `main`.
+* **Branch:** `main`
+* **Comando de Build (Build Command):** `npm run build`
+* **Diretório de Saída (Output Directory):** `dist`
+* **Comando de Instalação (Install Command):** `npm ci`
+* **Versão do Node.js:** `>= 20.0.0` (definida no `package.json`)
 
 ---
 
-### 🚀 Como funciona o fluxo automático (Push -> Build -> Deploy)
+### Opção B: Hostinger Git Tradicional (Apache / LiteSpeed)
+Se você estiver utilizando a ferramenta clássica de Git do hPanel (`Avançado > Git`), conecte na branch **`deploy`** (que contém exclusivamente a pasta `dist/` compilada com `.htaccess` na raiz).
 
-1. Você faz um commit e envia para o GitHub na branch `main`:
+---
+
+### 🚀 Fluxo de Publicação Contínua
+
+1. Você commita e envia suas alterações para a branch `main`:
    ```bash
    git push origin main
    ```
-2. O **GitHub Actions** (`.github/workflows/deploy.yml`) roda automaticamente:
-   - Instala as dependências e valida a tipagem.
-   - Executa o `npm run build` gerando a pasta `dist/` com o `.htaccess`.
-   - Faz o push dos arquivos compilados diretamente para a branch **`deploy`**.
-3. O **Webhook da Hostinger** detecta a atualização na branch `deploy` e faz o pull automático para a pasta `public_html` da sua hospedagem.
-4. O site atualizado entra no ar em poucos segundos!
-
----
-
-### ⚙️ Como conectar na Hostinger (Passo a Passo)
-
-1. No **hPanel da Hostinger**, acesse **Avançado** > **Git**.
-2. Preencha as configurações:
-   - **Repositório:** `https://github.com/megatecnologia-source/gmarsol.git`
-   - **Branch:** `deploy`
-   - **Diretório de instalação:** `public_html`
-3. Clique em **Criar / Conectar**.
-4. Copie a URL do **Webhook** fornecida pela Hostinger.
-5. No GitHub, acesse **Settings** > **Webhooks** > **Add webhook**:
-   - Cole a URL do Webhook da Hostinger no campo **Payload URL**.
-   - Content type: `application/json`.
-   - Eventos: "Just the push event".
-   - Salve o webhook.
-6. Pronto! A partir de agora, todo commit na `main` atualiza o site na Hostinger automaticamente.
+2. O **GitHub Actions** valida a tipagem (`npm run lint`), compila o projeto e sincroniza a branch `deploy`.
+3. A **Hostinger** detecta o novo commit na `main` e publica a versão em produção automaticamente!
 
 ---
 

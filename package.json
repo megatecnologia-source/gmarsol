@@ -5,6 +5,9 @@
   "description": "Website institucional One Page do Grupo Marsol em São Luís - MA. Desenvolvido por Bydo Marketing.",
   "author": "Bydo Marketing <contato@bydomarketing.com.br> (https://www.bydomarketing.com.br)",
   "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
